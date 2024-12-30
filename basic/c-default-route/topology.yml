@@ -1,0 +1,40 @@
+# Configure a BGP route server
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+name: default
+
+plugin: [ check_validate ]
+module: [ bgp, ospf ]
+
+_validate_version: 1.8.3
+_include: [ validate.yml ]
+
+groups:
+  external:
+    members: [ x1, r2 ]
+
+bgp.as: 65000
+
+bgp.advertise_loopback: false
+
+nodes:
+  r1:
+  x1:
+    id: 10
+    bgp.as: 65100
+    bgp.originate: [ 172.16.37.0/24 ]
+    module: [ bgp ]
+  r2:
+    bgp.originate: [ 192.168.42.0/24 ]
+
+links:
+- r1:
+  x1:
+  name: Link with the customer
+- r1:
+  r2:
+  name: Intra-ISP link
+
+message: |
+  The "Advertise Default Route in BGP" lab is ready. Use "netlab connect r1" to
+  connect to your router.

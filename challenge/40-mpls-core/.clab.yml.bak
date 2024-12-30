@@ -1,0 +1,69 @@
+name: mplscore
+prefix: "clab"
+
+mgmt:
+  network: netlab_mgmt
+  ipv4-subnet: 192.168.121.0/24
+  # Note: 'start' not validated
+topology:
+  nodes:
+    pe1:
+      mgmt-ipv4: 192.168.121.101
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: pe,as65000
+      binds:
+      - frr-daemons:/etc/frr/daemons
+    pe2:
+      mgmt-ipv4: 192.168.121.102
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: pe,as65000
+      binds:
+      - frr-daemons:/etc/frr/daemons
+    core:
+      mgmt-ipv4: 192.168.121.103
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: p
+      binds:
+      - frr-daemons:/etc/frr/daemons
+    e1:
+      mgmt-ipv4: 192.168.121.111
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: external,as65101
+      binds:
+      - frr-daemons:/etc/frr/daemons
+    e2:
+      mgmt-ipv4: 192.168.121.112
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: external,as65102
+      binds:
+      - frr-daemons:/etc/frr/daemons
+
+
+  links:
+  - endpoints:
+    - "pe1:eth1"
+    - "e1:eth1"
+  - endpoints:
+    - "pe1:eth2"
+    - "core:eth1"
+  - endpoints:
+    - "pe2:eth1"
+    - "core:eth2"
+  - endpoints:
+    - "pe2:eth2"
+    - "e2:eth1"

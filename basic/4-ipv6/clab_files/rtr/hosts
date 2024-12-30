@@ -1,0 +1,23 @@
+#
+# Created by netlab (containerlab Linux host)
+#
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::0	ip6-localnet
+ff00::0	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+#
+10.0.0.1 rtr
+10.1.0.1 eth1.rtr
+2001:db8:42::1 eth1.rtr
+10.1.0.5 eth2.rtr
+2001:db8:42:1::1 eth2.rtr
+192.168.100.1 x1
+2001:db8:100:1::1 x1
+10.1.0.2 eth1.x1
+2001:db8:42::2 eth1.x1
+192.168.101.1 x2
+2001:db8:101:1::1 x2
+10.1.0.6 eth1.x2
+2001:db8:42:1::2 eth1.x2

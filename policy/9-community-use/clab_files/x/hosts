@@ -1,0 +1,19 @@
+#
+# Created by netlab (containerlab Linux host)
+#
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::0	ip6-localnet
+ff00::0	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+#
+10.0.0.1 isp
+10.1.0.2 eth1.isp
+10.1.0.5 eth2.isp
+172.17.207.1 c
+10.1.0.1 eth1.c
+10.1.0.9 eth2.c
+10.0.0.11 x
+10.1.0.6 eth1.x
+10.1.0.10 eth2.x

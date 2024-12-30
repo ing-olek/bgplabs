@@ -1,0 +1,46 @@
+# Configure a BGP route server
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+name: rs
+
+version: 1.6.4
+_validate_version: 1.8.3
+
+plugin: [ check_validate, prune_bgp ]
+
+module: [ bgp ]
+
+groups:
+  _auto_create: True
+  external:
+    members: [ s1, s2, c1, c2 ]
+  core:
+    members: [ hub, c1, c2 ]
+    bgp.as: 65000
+    module: [ bgp, ospf ]
+    bgp.advertise_loopback: False
+  site:
+    members: [ s1, s2 ]
+    bgp.sessions.ipv4: [ ebgp ]
+    bgp.as: 65100
+
+nodes:
+  hub:
+    id: 1
+    bgp.originate: [ 192.168.42.0/24 ]
+
+links:
+- hub:
+  s1:
+  s2:
+  prefix.ipv4: 172.16.42.0/24
+  name: Carrier Ethernet
+- hub-c1
+- hub-c2
+- c1-c2
+
+_include: [ validate.yml ]
+
+message: |
+  The "Dynamic BGP Peers" lab is ready.
+  Use "netlab connect hub" to connect to your router.

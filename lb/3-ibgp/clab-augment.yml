@@ -1,0 +1,51 @@
+name: lb_ibgp
+prefix: "clab"
+
+mgmt:
+  network: netlab_mgmt
+  ipv4-subnet: 192.168.121.0/24
+  # Note: 'start' not validated
+  bridge: libvirt-mgmt
+topology:
+  nodes:
+    x1:
+      mgmt-ipv4: 192.168.121.104
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: external,as65100
+      binds:
+      - clab_files/x1/daemons:/etc/frr/daemons
+      - clab_files/x1/hosts:/etc/hosts
+    x2:
+      mgmt-ipv4: 192.168.121.105
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: external,as65100
+      binds:
+      - clab_files/x2/daemons:/etc/frr/daemons
+      - clab_files/x2/hosts:/etc/hosts
+
+    virbr4:
+      kind: bridge
+    virbr5:
+      kind: bridge
+    virbr2:
+      kind: bridge
+
+  links:
+  - endpoints:
+    - "x1:eth1"
+    - "virbr4:x1_eth1"
+  - endpoints:
+    - "x1:eth2"
+    - "virbr5:x1_eth2"
+  - endpoints:
+    - "x2:eth1"
+    - "virbr2:x2_eth1"
+  - endpoints:
+    - "x1:eth3"
+    - "x2:eth2"

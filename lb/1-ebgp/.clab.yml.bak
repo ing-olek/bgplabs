@@ -1,0 +1,80 @@
+name: lb_ebgp
+prefix: "clab"
+
+mgmt:
+  network: netlab_mgmt
+  ipv4-subnet: 192.168.121.0/24
+  # Note: 'start' not validated
+topology:
+  nodes:
+    rtr:
+      mgmt-ipv4: 192.168.121.101
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: as65000
+      binds:
+      - clab_files/rtr/daemons:/etc/frr/daemons
+      - clab_files/rtr/hosts:/etc/hosts
+    p1:
+      mgmt-ipv4: 192.168.121.102
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: external,isp_65100,as65100
+      binds:
+      - clab_files/p1/daemons:/etc/frr/daemons
+      - clab_files/p1/hosts:/etc/hosts
+    p2:
+      mgmt-ipv4: 192.168.121.103
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: external,isp_65100,as65100
+      binds:
+      - clab_files/p2/daemons:/etc/frr/daemons
+      - clab_files/p2/hosts:/etc/hosts
+    p3:
+      mgmt-ipv4: 192.168.121.104
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: external,as65101
+      binds:
+      - clab_files/p3/daemons:/etc/frr/daemons
+      - clab_files/p3/hosts:/etc/hosts
+    c2:
+      mgmt-ipv4: 192.168.121.105
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: external,as65001
+      binds:
+      - clab_files/c2/daemons:/etc/frr/daemons
+      - clab_files/c2/hosts:/etc/hosts
+
+
+  links:
+  - endpoints:
+    - "rtr:eth1"
+    - "p1:eth1"
+  - endpoints:
+    - "rtr:eth2"
+    - "p2:eth1"
+  - endpoints:
+    - "rtr:eth3"
+    - "p3:eth1"
+  - endpoints:
+    - "p1:eth2"
+    - "p2:eth2"
+  - endpoints:
+    - "p2:eth3"
+    - "c2:eth1"
+  - endpoints:
+    - "p3:eth2"
+    - "c2:eth2"

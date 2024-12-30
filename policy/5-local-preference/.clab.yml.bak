@@ -1,0 +1,70 @@
+name: locpref
+prefix: "clab"
+
+mgmt:
+  network: netlab_mgmt
+  ipv4-subnet: 192.168.121.0/24
+  # Note: 'start' not validated
+topology:
+  nodes:
+    c1:
+      mgmt-ipv4: 192.168.121.101
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: customer,as65000
+      binds:
+      - clab_files/c1/daemons:/etc/frr/daemons
+      - clab_files/c1/hosts:/etc/hosts
+    c2:
+      mgmt-ipv4: 192.168.121.102
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: customer,as65000
+      binds:
+      - clab_files/c2/daemons:/etc/frr/daemons
+      - clab_files/c2/hosts:/etc/hosts
+    x1:
+      mgmt-ipv4: 192.168.121.110
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: external,as65100
+      binds:
+      - clab_files/x1/daemons:/etc/frr/daemons
+      - clab_files/x1/hosts:/etc/hosts
+    x2:
+      mgmt-ipv4: 192.168.121.111
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: external,as65100
+      binds:
+      - clab_files/x2/daemons:/etc/frr/daemons
+      - clab_files/x2/hosts:/etc/hosts
+
+
+  links:
+  - endpoints:
+    - "c1:eth1"
+    - "x1:eth1"
+  - endpoints:
+    - "c1:eth2"
+    - "x2:eth1"
+  - endpoints:
+    - "x1:eth2"
+    - "x2:eth2"
+  - endpoints:
+    - "c2:eth1"
+    - "x1:eth3"
+  - endpoints:
+    - "c2:eth2"
+    - "x2:eth3"
+  - endpoints:
+    - "c1:eth3"
+    - "c2:eth3"

@@ -1,0 +1,33 @@
+name: frrouting
+prefix: "clab"
+
+mgmt:
+  network: netlab_mgmt
+  ipv4-subnet: 192.168.121.0/24
+  # Note: 'start' not validated
+topology:
+  nodes:
+    rtr:
+      mgmt-ipv4: 192.168.121.101
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: 
+      binds:
+      - frr-daemons.j2:/etc/frr/daemons
+    x1:
+      mgmt-ipv4: 192.168.121.102
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: as65100
+      binds:
+      - frr-daemons.j2:/etc/frr/daemons
+
+
+  links:
+  - endpoints:
+    - "rtr:eth1"
+    - "x1:eth1"

@@ -1,0 +1,66 @@
+name: rs
+prefix: "clab"
+
+mgmt:
+  network: netlab_mgmt
+  ipv4-subnet: 192.168.121.0/24
+  # Note: 'start' not validated
+topology:
+  nodes:
+    rs:
+      mgmt-ipv4: 192.168.121.101
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: as65000
+      binds:
+      - clab_files/rs/daemons:/etc/frr/daemons
+      - clab_files/rs/hosts:/etc/hosts
+    isp1:
+      mgmt-ipv4: 192.168.121.102
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: as65100
+      binds:
+      - clab_files/isp1/daemons:/etc/frr/daemons
+      - clab_files/isp1/hosts:/etc/hosts
+    isp2:
+      mgmt-ipv4: 192.168.121.103
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: external,as65103
+      binds:
+      - clab_files/isp2/daemons:/etc/frr/daemons
+      - clab_files/isp2/hosts:/etc/hosts
+    isp3:
+      mgmt-ipv4: 192.168.121.104
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: external,as65107
+      binds:
+      - clab_files/isp3/daemons:/etc/frr/daemons
+      - clab_files/isp3/hosts:/etc/hosts
+
+    rs_1:
+      kind: bridge
+
+  links:
+  - endpoints:
+    - "rs:eth1"
+    - "rs_1:rs_eth1"
+  - endpoints:
+    - "isp1:eth1"
+    - "rs_1:isp1_eth1"
+  - endpoints:
+    - "isp2:eth1"
+    - "rs_1:isp2_eth1"
+  - endpoints:
+    - "isp3:eth1"
+    - "rs_1:isp3_eth1"

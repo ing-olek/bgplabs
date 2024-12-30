@@ -1,0 +1,66 @@
+name: passive
+prefix: "clab"
+
+mgmt:
+  network: netlab_mgmt
+  ipv4-subnet: 192.168.121.0/24
+  # Note: 'start' not validated
+topology:
+  nodes:
+    hub:
+      mgmt-ipv4: 192.168.121.101
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: as65000
+      binds:
+      - clab_files/hub/daemons:/etc/frr/daemons
+      - clab_files/hub/hosts:/etc/hosts
+    s1:
+      mgmt-ipv4: 192.168.121.102
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: as65100
+      binds:
+      - clab_files/s1/daemons:/etc/frr/daemons
+      - clab_files/s1/hosts:/etc/hosts
+    s2:
+      mgmt-ipv4: 192.168.121.103
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: external,as65103
+      binds:
+      - clab_files/s2/daemons:/etc/frr/daemons
+      - clab_files/s2/hosts:/etc/hosts
+    s3:
+      mgmt-ipv4: 192.168.121.104
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: external,as65107
+      binds:
+      - clab_files/s3/daemons:/etc/frr/daemons
+      - clab_files/s3/hosts:/etc/hosts
+
+    passive_1:
+      kind: bridge
+
+  links:
+  - endpoints:
+    - "hub:eth1"
+    - "passive_1:hub_eth1"
+  - endpoints:
+    - "s1:eth1"
+    - "passive_1:s1_eth1"
+  - endpoints:
+    - "s2:eth1"
+    - "passive_1:s2_eth1"
+  - endpoints:
+    - "s3:eth1"
+    - "passive_1:s3_eth1"

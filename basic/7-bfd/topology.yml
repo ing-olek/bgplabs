@@ -1,0 +1,44 @@
+# Configure a BGP session with an external BGP speaker
+
+defaults.sources.extra: [ ../../defaults.yml ]
+name: bfd
+
+module: [ bgp ]
+plugin: [ bgp.session, enable_fix_config, fix_frr, check_validate ]
+
+version: 1.6.4
+_validate_version: 1.8.3
+_include: [ validate.yml ]
+
+groups:
+  external:
+    members: [ x1 ]
+    module: [ bgp, bfd ]
+
+bgp.advertise_loopback: false
+
+nodes:
+  r1:
+    bgp.as: 65000
+    bgp.originate: [ 192.168.42.0/24 ]
+  r2:
+    bgp.as: 65001
+    bgp.originate: [ 192.168.43.0/24 ]
+  x1:
+    bgp.as: 65100
+    id: 10
+
+links:
+- r1:
+  x1:
+    bgp.timers:
+      keepalive: 60
+      hold: 180
+    bgp.bfd: True
+- x1:               # Link added to maintain the interface names consistent with 4-router topology
+  pool: l2only
+- r2-x1
+
+message: |
+  The "Use BFD to Speed Up BGP Convergence" lab is ready. Use
+  "netlab connect" command to connect to your routers (r1 and r2).

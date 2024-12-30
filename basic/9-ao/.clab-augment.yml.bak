@@ -1,0 +1,33 @@
+name: protect
+prefix: "clab"
+
+mgmt:
+  network: netlab_mgmt
+  ipv4-subnet: 192.168.121.0/24
+  # Note: 'start' not validated
+  bridge: libvirt-mgmt
+topology:
+  nodes:
+    rtr:
+      mgmt-ipv4: 192.168.121.101
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: as65000
+      binds:
+      - clab_files/rtr/daemons:/etc/frr/daemons
+      - clab_files/rtr/hosts:/etc/hosts
+
+    virbr1:
+      kind: bridge
+    virbr2:
+      kind: bridge
+
+  links:
+  - endpoints:
+    - "rtr:eth1"
+    - "virbr1:rtr_eth1"
+  - endpoints:
+    - "rtr:eth2"
+    - "virbr2:rtr_eth2"

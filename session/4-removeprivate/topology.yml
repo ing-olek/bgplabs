@@ -1,0 +1,39 @@
+# Remove private AS from the AS path
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+name: privateas
+
+plugin: [ check_validate ]
+
+_validate_version: 1.8.3
+_include: [ validate.yml ]
+
+module: [ bgp ]
+
+groups:
+  external:
+    members: [ x1, x2 ]
+
+nodes:
+  rtr:
+    bgp.as: 64500
+  x1:
+    bgp.as: 65000
+    bgp.router_id: 10.0.0.10
+    id: 10
+    loopback.ipv4: 192.168.42.1/24
+  x2:
+    bgp.as: 64507
+    bgp.router_id: 10.0.0.11
+    id: 11
+links:
+- rtr:
+  x1:
+- rtr:
+  x2:
+
+message: |
+  The "Remove Private BGP AS Numbers from the AS Path" lab is ready.
+  Connect to your router with "netlab connect rtr".
+
+  Good luck!

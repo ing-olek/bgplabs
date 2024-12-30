@@ -1,0 +1,47 @@
+name: ebgp_mh
+prefix: "clab"
+
+mgmt:
+  network: netlab_mgmt
+  ipv4-subnet: 192.168.121.0/24
+  # Note: 'start' not validated
+topology:
+  nodes:
+    int:
+      mgmt-ipv4: 192.168.121.102
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: as65000
+      binds:
+      - clab_files/int/daemons:/etc/frr/daemons
+      - clab_files/int/hosts:/etc/hosts
+    ext:
+      mgmt-ipv4: 192.168.121.103
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: as64501
+      binds:
+      - clab_files/ext/daemons:/etc/frr/daemons
+      - clab_files/ext/hosts:/etc/hosts
+    fw:
+      mgmt-ipv4: 192.168.121.101
+      kind: linux
+      restart-policy: 'no'
+      image: python:3.9-alpine
+      runtime: docker
+      group: 
+      binds:
+      - clab_files/fw/hosts:/etc/hosts
+
+
+  links:
+  - endpoints:
+    - "ext:eth1"
+    - "fw:eth1"
+  - endpoints:
+    - "int:eth1"
+    - "fw:eth2"

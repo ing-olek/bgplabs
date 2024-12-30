@@ -1,0 +1,46 @@
+name: add_path
+prefix: "clab"
+
+mgmt:
+  network: netlab_mgmt
+  ipv4-subnet: 192.168.121.0/24
+  # Note: 'start' not validated
+  bridge: libvirt-mgmt
+topology:
+  nodes:
+    x1:
+      mgmt-ipv4: 192.168.121.110
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: external,isp,as65100
+      binds:
+      - clab_files/x1/daemons:/etc/frr/daemons
+      - clab_files/x1/hosts:/etc/hosts
+    x2:
+      mgmt-ipv4: 192.168.121.111
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: external,isp,as65100
+      binds:
+      - clab_files/x2/daemons:/etc/frr/daemons
+      - clab_files/x2/hosts:/etc/hosts
+
+    virbr3:
+      kind: bridge
+    virbr5:
+      kind: bridge
+
+  links:
+  - endpoints:
+    - "x1:eth1"
+    - "virbr3:x1_eth1"
+  - endpoints:
+    - "x2:eth1"
+    - "virbr5:x2_eth1"
+  - endpoints:
+    - "x1:eth2"
+    - "x2:eth2"

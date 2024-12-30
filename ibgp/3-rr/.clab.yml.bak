@@ -1,0 +1,96 @@
+name: rr
+prefix: "clab"
+
+mgmt:
+  network: netlab_mgmt
+  ipv4-subnet: 192.168.121.0/24
+  # Note: 'start' not validated
+topology:
+  nodes:
+    l1:
+      mgmt-ipv4: 192.168.121.101
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: leafs,as65000
+      binds:
+      - clab_files/l1/daemons:/etc/frr/daemons
+      - clab_files/l1/hosts:/etc/hosts
+    l2:
+      mgmt-ipv4: 192.168.121.102
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: leafs,as65000
+      binds:
+      - clab_files/l2/daemons:/etc/frr/daemons
+      - clab_files/l2/hosts:/etc/hosts
+    l3:
+      mgmt-ipv4: 192.168.121.103
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: leafs,as65000
+      binds:
+      - clab_files/l3/daemons:/etc/frr/daemons
+      - clab_files/l3/hosts:/etc/hosts
+    l4:
+      mgmt-ipv4: 192.168.121.104
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: leafs,as65000
+      binds:
+      - clab_files/l4/daemons:/etc/frr/daemons
+      - clab_files/l4/hosts:/etc/hosts
+    s1:
+      mgmt-ipv4: 192.168.121.110
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: as65000
+      binds:
+      - clab_files/s1/daemons:/etc/frr/daemons
+      - clab_files/s1/hosts:/etc/hosts
+    s2:
+      mgmt-ipv4: 192.168.121.111
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: as65000
+      binds:
+      - clab_files/s2/daemons:/etc/frr/daemons
+      - clab_files/s2/hosts:/etc/hosts
+
+
+  links:
+  - endpoints:
+    - "l1:eth1"
+    - "s1:eth1"
+  - endpoints:
+    - "l1:eth2"
+    - "s2:eth1"
+  - endpoints:
+    - "l2:eth1"
+    - "s1:eth2"
+  - endpoints:
+    - "l2:eth2"
+    - "s2:eth2"
+  - endpoints:
+    - "l3:eth1"
+    - "s1:eth3"
+  - endpoints:
+    - "l3:eth2"
+    - "s2:eth3"
+  - endpoints:
+    - "l4:eth1"
+    - "s1:eth4"
+  - endpoints:
+    - "l4:eth2"
+    - "s2:eth4"

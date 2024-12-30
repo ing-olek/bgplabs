@@ -1,0 +1,70 @@
+name: asoverride
+prefix: "clab"
+
+mgmt:
+  network: netlab_mgmt
+  ipv4-subnet: 192.168.121.0/24
+  # Note: 'start' not validated
+topology:
+  nodes:
+    pe1:
+      mgmt-ipv4: 192.168.121.101
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: provider,as65100
+      binds:
+      - clab_files/pe1/daemons:/etc/frr/daemons
+      - clab_files/pe1/hosts:/etc/hosts
+    pe2:
+      mgmt-ipv4: 192.168.121.102
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: provider,as65100
+      binds:
+      - clab_files/pe2/daemons:/etc/frr/daemons
+      - clab_files/pe2/hosts:/etc/hosts
+    ce1:
+      mgmt-ipv4: 192.168.121.110
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: customer,external,as65000
+      binds:
+      - clab_files/ce1/daemons:/etc/frr/daemons
+      - clab_files/ce1/hosts:/etc/hosts
+    ce2:
+      mgmt-ipv4: 192.168.121.111
+      kind: linux
+      restart-policy: 'no'
+      image: quay.io/frrouting/frr:10.0.1
+      runtime: docker
+      group: customer,external,as65000
+      binds:
+      - clab_files/ce2/daemons:/etc/frr/daemons
+      - clab_files/ce2/hosts:/etc/hosts
+
+
+  links:
+  - endpoints:
+    - "pe1:eth1"
+    - "ce1:eth1"
+  - endpoints:
+    - "pe1:eth2"
+    - "ce2:eth1"
+  - endpoints:
+    - "ce1:eth2"
+    - "ce2:eth2"
+  - endpoints:
+    - "pe2:eth1"
+    - "ce1:eth3"
+  - endpoints:
+    - "pe2:eth2"
+    - "ce2:eth3"
+  - endpoints:
+    - "pe1:eth3"
+    - "pe2:eth3"

@@ -1,0 +1,38 @@
+# Passive BGP Sessions
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+name: passive
+
+version: 1.6.4
+
+plugin: [ bgp.session, prune_ebgp ]
+
+module: [ bgp ]
+
+groups:
+  external:
+    members: [ s2, s3 ]
+
+nodes:
+  hub:
+    bgp.as: 65000
+  s1:
+    bgp.as: 65100
+  s2:
+    bgp.as: 65103
+  s3:
+    bgp.as: 65107
+links:
+- hub:
+  s1:
+  s2:
+    bgp.timers:
+      keepalive: 1
+      hold: 3
+  s3:
+    bgp.passive: True
+  name: Carrier Ethernet LAN
+
+message: |
+  The "Passive BGP Sessions" lab is ready.
+  Use "netlab connect" to connect to the lab devices.

@@ -1,0 +1,17 @@
+!
+router bgp {{ bgp.as }}
+
+  ! Disable BGP AS-Path multipath relax feature for ECMP lab
+  no bgp bestpath as-path multipath-relax
+  
+
+! Set maximum-paths to 1 for ECMP lab
+
+{% for af in ['ipv4','ipv6'] if bgp[af] is defined %}
+ address-family {{ af }} unicast
+!
+  maximum-paths 1
+!
+{% endfor %}
+!
+do write
